@@ -1,0 +1,48 @@
+// 通过 javap -c  StackDemo.class  > StackDemo.txt生成txt文件
+
+Compiled from "StackDemo.java"
+public class com.kang.proxy.jvm.stack.StackDemo {
+  // 构造方法
+  public com.kang.proxy.jvm.stack.StackDemo();
+    Code:
+       0: aload_0                     // 从局部变量0中装载引用类型值
+       1: invokespecial #1            // 根据编译时类型来调用实例方法 Method java/lang/Object."<init>":()V
+       4: return                      // 从方法中返回，返回值为void
+
+  public int compute();
+    Code:
+       0: iconst_1                   // 将int类型常量1压入compute()栈帧的"操作数栈"
+       1: istore_1                   // 将int类型值存入compute()栈帧的"局部变量1"
+       2: iconst_2                   // 将int类型常量2压入操作数栈
+       3: istore_2                   // 将int类型值存入局部变量2
+       4: iload_1                    // 从局部变量1中装载int类型值
+       5: iload_2                    // 从局部变量2中装载int类型值
+       6: iadd                       // 执行int类型的加法
+       7: bipush        10           // 将一个8位带符号整数(这里是10)压入栈
+       9: imul                       // 执行int类型的乘法
+      10: istore_3                   // 将int类型值存入局部变量3
+      11: iload_3                    // 从局部变量3中装载int类型值
+      12: ireturn                    // 从方法中返回int类型的数据
+
+  public static void main(java.lang.String[]);
+    Code:
+       0: new           #2                  // 创建StackDemo对象,StackDemo存在堆内存，这里main()栈帧仅保存指针 class com/kang/proxy/jvm/stack/StackDemo
+       3: dup                               // 复制栈顶部一个字长内容
+       4: invokespecial #3                  // Method "<init>":()V
+       7: astore_1                          // 将引用类型或returnAddress类型值存入局部变量1
+       8: aload_1                           // 从局部变量1中装载引用类型值
+       9: invokevirtual #4                  // Method compute:()I
+      12: istore_2                          // 将int类型值存入局部变量2
+      13: getstatic     #5                  // 从类中获取静态字段 Field java/lang/System.out:Ljava/io/PrintStream;
+      16: iload_2                           // 从局部变量2中装载int类型值
+      17: invokevirtual #6                  // 调度对象的实便方法 Method java/io/PrintStream.println:(I)V
+      20: return
+
+  static {};
+    Code:
+       0: new           #7                  // 创建User对象,这里方法区(元空间)仅仅保持User对象的在堆内存的指针 class com/kang/proxy/jvm/classload/User
+       3: dup                               // 复制栈顶部一个字长内容
+       4: invokespecial #8                  // 根据编译时类型来调用实例方法  Method com/kang/proxy/jvm/classload/User."<init>":()V
+       7: putstatic     #9                  // 设置类中静态字段的值 Field user:Lcom/kang/proxy/jvm/classload/User;
+      10: return
+}

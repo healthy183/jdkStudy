@@ -1,0 +1,14 @@
+jstat -gcoldcapacity  pid  老年代内存统计
+OGCMN       OGCMX        OGC         OC       YGC   FGC    FGCT     GCT
+40960.0    644608.0     40960.0     40960.0     0     0    0.000    0.000
+
+
+OGCMN       老年代最小容量
+OGCMX       老年代最大容量
+OGC         当前老年代大小
+OC          老年代大小
+YGC         年轻代垃圾回收次数
+FGC         老年代垃圾回收次数
+FGCT        老年代垃圾回收消耗时间
+GCT         垃圾回收消耗总时间
+

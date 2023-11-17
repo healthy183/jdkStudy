@@ -1,0 +1,16 @@
+原网址：
+https://github.com/alibaba/arthas/issues/1892
+
+使用arthas的trace查询耗时，总结本案例的优化：
+1，减少创建对象，特别是for循环中多次的创建
+2，减少反复 formatDate()
+3，compareTo性能差，改成使用Long类型判断
+4，创建集合Collection请指定容量以免扩容耗损性能
+5，set集合尽量自己通过标识判断是否已经存在，免得add进去是判断影响性能
+6，减少重复的list.size()、 list.get(index)等方法调用
+7，减少一个List中导入另一个List尽量使用先subList再atAll，多次get和add耗性能
+
+其他网友交流：
+能用单例就单例,比如2就可以用单例的java类
+SimpleDateFormat已经可以废弃了,直接java.time.format.DateTimeFormatter
+Date.compare,建议使用新的JavaDateApi,如LocalDate,LocalDatetime,Durtaion,YearMonth之类的,简单测试,发现,巨量调用以后,LocalDatetime.compareTo方法是Date.compare的1/3

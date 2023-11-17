@@ -1,0 +1,24 @@
+StackDemo.java
+是一个普通的java类，通过以下命令生成jvm指令
+通过 javap -c  StackDemo.class  > StackDemo.txt 生成txt文件
+
+1，本节课程通过StackDemo.txt的jvm指令分析jvm关于栈(线程)的分析。
+1.1 通过jvm.jpg，总结就是：
+1，每个方法都有在栈(线程)中分配一块栈帧
+2，每一块栈帧都包含局部变量表、操作数栈、动态链接、方法出口
+
+1.2从StackDemo.txt中可以看出每一个局部变量生成都经过：
+1，将x类型常量y压入当前方法的栈帧的"操作数栈"
+2，将x类型值存入当前方法的栈帧的"局部变量y",filo(First In Last Out)后进先出
+3，局部变量表的新new的对象其实只是保存在堆内存，局部变量表仅保存指针
+
+1.3
+另外，全局变量、静态变量、常量、类信息都保存在方法区(元空间)
+
+2，StackOverflowTest.java是栈溢出demo
+Xss用于设置单个线程栈大小
+设置 -Xss128k 可以1100次，如果是默认-Xss1024k是29137次
+Xss设置越小count值越小，说明一个线程栈里能分配的栈帧就越少，但是对JVM整体来说能开启的线程数会更多
+
+3，AllotOnStack.java
+展示"开启逃逸分析参数"、"开启标量替换参数"对gc的影响

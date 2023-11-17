@@ -1,0 +1,15 @@
+jstat -gcold  pid  老年代full gc统计
+MC         MU      CCSC      CCSU       OC          OU       YGC    FGC    FGCT     GCT
+4480.0    774.9    384.0     75.9     40960.0       0.0      0     0       0.000    0.000
+
+
+MC     方法区大小
+MU     方法区使用大小
+CCSC   压缩类空间大小
+CCSU   压缩类空间使用大小
+OC     老年代大小
+OU     老年代使用大小
+YGC    年轻代垃圾回收次数
+FGC    老年代垃圾回收次数
+FGCT   老年代垃圾回收消耗时间
+GCT    垃圾回收消耗总时间

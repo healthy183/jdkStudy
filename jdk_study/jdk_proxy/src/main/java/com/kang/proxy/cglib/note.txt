@@ -1,0 +1,156 @@
+cglib
+
+1，认识cglib
+通过配置vm参数可以查看生成代理类的class文件
+-Dcglib.debugLocation=D:\idea4restart\jdk_study\jdk_proxy\target\classes
+
+例如ProxyObj的代理类就是ProxyObj$$EnhancerByCGLIB$$ab5bce80并继承ProxyObj，类关系如下：
+public class ProxyObj$$EnhancerByCGLIB$$ab5bce80 extends ProxyObj implements Factory
+代理类跟原类的方法是一一对应，例如原类的test方法在代理类中是这样：
+ public final void test() {
+        MethodInterceptor var10000 = this.CGLIB$CALLBACK_0;
+        if (var10000 == null) {
+            CGLIB$BIND_CALLBACKS(this);
+            var10000 = this.CGLIB$CALLBACK_0;
+        }
+
+        if (var10000 != null) {
+            var10000.intercept(this, CGLIB$test$0$Method, CGLIB$emptyArgs, CGLIB$test$0$Proxy);
+        } else {
+            super.test();
+        }
+    }
+
+2，认识执行逻辑
+通过var10000.intercept来执行增强逻辑。
+var10000是存在CGLIB$THREAD_CALLBACKS(一个ThreadLocal对象)，但是var10000在什么时候存进CGLIB$THREAD_CALLBACKS里面?
+↓↓↓
+
+Enhancer.create()
+    Enhancer.createHelper()
+        AbstractClassGenerator.create(Object key)
+            Enhancer.firstInstance((Class)obj)
+                Enhancer.createUsingReflection(type)
+                    Enhancer.setThreadCallbacks(type, this.callbacks); //这里设置callback,也就是var10000
+
+3，代理类是什么时候创建的?
+在AbstractClassGenerator.create(Object key)中，
+Object obj = data.get(this, this.getUseCache()) // 会尝试在缓存中获得代理对象，如无则会执行
+Enhancer.generate(this); // this是ClassLoaderData
+
+4，认识methodProxy
+4.1 已知methodProxy.invoke(proxyObj,objects); // 调用原始类方法，那么
+intercept方法的methodProxy是什么时候创建？
+
+在代理类的CGLIB$STATICHOOK1()中执行创建
+CGLIB$test$0$Proxy = MethodProxy.create(var1, var0, "()V", "test", "CGLIB$test$0");
+
+public static MethodProxy create(Class c1, Class c2, String desc, String name1, String name2) {
+    // c1是ProxyObj
+    // c2是ProxyObj代理类
+    // desc被代理方法的返回值类型
+    // name1是被代理方法名比如test
+    // name2是代理类中的CGLIB$test$0方法，会调用super.test()
+    MethodProxy proxy = new MethodProxy();
+    proxy.sig1 = new Signature(name1, desc); // 被代理方法签名，也就是代表void test()
+    proxy.sig2 = new Signature(name2, desc); // 代理方法签名，也就是void CGLIB$test$o());
+    proxy.createInfo = new CreateInfo(c1, c2); // CreateInfo中表示的就是被代理类和代理类的信息
+    return proxy;
+   }
+
+4.2 invoke方法
+public Object intercept(Object o, Method method, Object[] objects, MethodProxy methodProxy) throws Throwable {
+    System.out.println("before");
+    methodProxy.invoke(proxyObj,objects); // 这里要proxyObj而不是o，如果是o的话则死循环
+    methodProxy.invokeSuper(o,objects); // 通过代理类调用被代理方法
+    System.out.println("after");
+    return null;
+}
+
+invoke源码：
+  this.init();
+  FastClassInfo fci = this.fastClassInfo;
+  return fci.f1.invoke(fci.i1, obj, args);
+
+invokeSuper源码：
+  this.init();
+  FastClassInfo fci = this.fastClassInfo;
+  return fci.f2.invoke(fci.i2, obj, args);
+
+4.3 init()源码解读
+ProxyObj是原始类
+ProxyObj$$EnhancerByCGLIB$$ab5bce80   // ProxyObj的代理类
+ProxyObj$$FastClassByCGLIB$$6f2ddfc8  // ProxyObj的fastClass代理类,
+ProxyObj$$EnhancerByCGLIB$$ab5bce80$$FastClassByCGLIB$$df00e386   // ProxyObj代理类的fastClass代理类
+
+两个fastClass代理类中，getIndex(...)都为每个被代理对象的每一个方法定义了一个index,例如：
+case -1659809612:
+    if (var10000.equals("CGLIB$test$0()V")) {
+        return 17;
+    }
+break;
+
+再看看init()方法
+private void init() {
+    if (this.fastClassInfo == null) {
+        synchronized(this.initLock) {
+            if (this.fastClassInfo == null) {
+                CreateInfo ci = this.createInfo;
+                FastClassInfo fci = new FastClassInfo();
+                fci.f1 = helper(ci, ci.c1); // 生成ProxyObj$$FastClassByCGLIB$$6f2ddfc8
+                fci.f2 = helper(ci, ci.c2); // 生成ProxyObj$$EnhancerByCGLIB$$ab5bce80$$FastClassByCGLIB$$df00e386
+                fci.i1 = fci.f1.getIndex(this.sig1); // 找出原始类ProxyObj待执行方法的index
+                fci.i2 = fci.f2.getIndex(this.sig2); // 找出代理类ProxyObj$$EnhancerByCGLIB$$ab5bce80待执行方法的index
+                this.fastClassInfo = fci;  // 创建fastClassInfo
+                this.createInfo = null;
+            }
+        }
+    }
+}
+
+4.4 FastClassInfo解读
+
+MethodProxy#invoke源码：
+  this.init();
+  FastClassInfo fci = this.fastClassInfo;
+  return fci.f1.invoke(fci.i1, obj, args);
+ 根据4.3，我们得知：
+ fci.f1 就是ProxyObj$$FastClassByCGLIB$$6f2ddfc8
+ fci.i1 就是原始类ProxyObj待执行方法的index
+ obj是 ProxyObj$$EnhancerByCGLIB$$ab5bce80
+
+所以我们分析下ProxyObj$$FastClassByCGLIB$$6f2ddfc8#invoke，
+就是在通过入参的索引来判断方法，然后执行
+ switch (var10001) {
+        case 0:
+            var10000.test();
+            return null;
+ }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

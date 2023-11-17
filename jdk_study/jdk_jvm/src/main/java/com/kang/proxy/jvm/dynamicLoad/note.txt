@@ -1,0 +1,2 @@
+TestDynamicLoad.java
+简单展示java对象加载顺序

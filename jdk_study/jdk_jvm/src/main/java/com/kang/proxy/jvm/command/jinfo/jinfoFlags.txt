@@ -1,0 +1,23 @@
+jinfo -flags pid 查看java进程的查看jvm的参数
+Attaching to process ID 5394, please wait...
+Debugger attached successfully.
+Server compiler detected.
+JVM version is 25.162-b12
+Non-default VM flags:
+ -XX:CICompilerCount=3  --jvm处理编译队列的总线程数，设置的相对较大可以一定程度提升JIT编译的速度，默认为3
+ -XX:InitialHeapSize=62914560    --初始化堆内存
+ -XX:MaxHeapSize=989855744       --堆空间允许的最大值
+ -XX:MaxNewSize=329777152        --JVM 新生代堆空间允许的最大值
+ -XX:MinHeapDeltaBytes=524288    --为了防止频繁扩展内存代空间,每次扩展内存代时都有一个最小值,其默认值为128KB
+ -XX:NewSize=20971520            --JVM 新生代堆空间的默认值。
+ -XX:OldSize=41943040            --JVM 老生代堆空间的默认值。
+ -XX:+UseCompressedClassPointers --使用-XX:+UseCompressedClassPointers选项来压缩类指针
+                                    --对象中指向类元数据的指针会被压缩成32位
+                                    --类指针压缩空间会有一个基地址
+
+ -XX:+UseCompressedOops          --压缩对象指针
+                                    --"oops"指的是普通对象指针("ordinary" object pointers)。
+                                    --Java堆中对象指针会被压缩成32位。
+                                    --使用堆基地址（如果堆在低26G内存中的话，基地址为0）
+ -XX:+UseFastUnorderedTimeStamps
+ -XX:+UseParallelGC             -使用 Parallel收集器

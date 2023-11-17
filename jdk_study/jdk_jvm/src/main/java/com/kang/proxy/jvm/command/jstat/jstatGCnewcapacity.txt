@@ -1,0 +1,18 @@
+jstat -gcnewcapacity pid  统计gc时，新生代 heap容量
+
+NGCMN      NGCMX      NGC     S0CMX     S0C     S1CMX      S1C      ECMX        EC       YGC   FGC
+20480.0   322048.0    20480.0 107008.0  2560.0  107008.0   2560.0   321024.0    15360.0  0     0
+
+NGCMN   新生代最小容量
+NGCMX   新生代最大容量
+NGC     当前新生代容量
+S0CMX   年轻代中S0（幸存区）的最大容量 (字节) 
+S0C     第一个幸存区大小
+S1CMX   年轻代中S1（幸存区）的最大容量 (字节) 
+S1C     第二个幸存区的大小
+ECMX    伊甸园区的最大容量 (字节) 
+EC      伊甸园区的大小
+YGC     年轻代gc次数
+FGC     老年代GC次数
+
+

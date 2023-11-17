@@ -1,0 +1,39 @@
+1,执行 top -p pid 查看当前pid cpu占用情况
+top - 14:23:32 up  1:04,  6 users,  load average: 1.00, 1.03, 0.87
+Tasks:   1 total,   0 running,   1 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 24.6 us,  0.0 sy,  0.0 ni, 75.4 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem :  3863572 total,  2033672 free,  1033712 used,   796188 buff/cache
+KiB Swap:  2097148 total,  2097148 free,        0 used.  2491504 avail Mem
+
+   PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+  4229 root      20   0 3471168  37632  11724 S 106.7  1.0  27:53.85 java
+
+2，按H查看此pid里面每一个线程的cpu占用情况
+top - 14:23:45 up  1:04,  6 users,  load average: 1.00, 1.03, 0.87
+Threads:  16 total,   1 running,  15 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 25.0 us,  0.1 sy,  0.0 ni, 74.9 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem :  3863572 total,  2033572 free,  1033828 used,   796172 buff/cache
+KiB Swap:  2097148 total,  2097148 free,        0 used.  2491404 avail Mem
+
+   PID USER      PR  NI    VIRT    RES    SHR S %CPU %MEM     TIME+ COMMAND
+  9127 root      20   0 3471168  37632  11724 R 99.9  1.0  28:05.98 java
+  4243 root      20   0 3471168  37632  11724 S  0.3  1.0   0:01.15 java
+  4229 root      20   0 3471168  37632  11724 S  0.0  1.0   0:00.00 java
+
+3，将十进制的9127转成16进制得到：23a7(记得小写)，使用 jstack pid | grep -A 10 23a7
+备注：手动转16进制麻烦可以使用以下命令替换：jstack pid | grep -A 10 $(printf "%x" 子线程pid)
+
+得出nid=0x23a7，确认是TopJstackCPU的22行占用cpu最高,搜索结果如下：
+"main" #1 prio=5 os_prio=0 tid=0x00007f7ab0009800 nid=0x23a7 runnable [0x00007f7ab9409000]
+   java.lang.Thread.State: RUNNABLE
+	at TopJstackCPU.main(TopJstackCPU.java:22)
+
+"VM Thread" os_prio=0 tid=0x00007f7ab0077800 nid=0x108b runnable
+
+"GC task thread#0 (ParallelGC)" os_prio=0 tid=0x00007f7ab001e800 nid=0x1087 runnable
+
+"GC task thread#1 (ParallelGC)" os_prio=0 tid=0x00007f7ab0020800 nid=0x1088 runnable
+
+"GC task thread#2 (ParallelGC)" os_prio=0 tid=0x00007f7ab0022000 nid=0x1089 runnable
+
+

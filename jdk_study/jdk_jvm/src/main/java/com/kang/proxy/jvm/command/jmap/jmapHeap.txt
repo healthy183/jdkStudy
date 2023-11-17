@@ -1,0 +1,46 @@
+Attaching to process ID 14104, please wait...
+Debugger attached successfully.
+Server compiler detected.
+JVM version is 25.162-b12
+
+using thread-local object allocation.
+Parallel GC with 8 thread(s)     --收集器是JDK默认的ParallelGC，用了8条线程作为回收
+
+Heap Configuration:
+   MinHeapFreeRatio         = 0    --可改变JVM最小剩余堆内存大小比例，增大到指定最大内存
+   MaxHeapFreeRatio         = 100  --可改变JVM最大剩余堆内存大小比例，减小到指定最小内存
+   MaxHeapSize              = 2111832064 (2014.0MB)  --JVM 堆空间允许的最大值
+   NewSize                  = 44040192 (42.0MB)      --JVM 新生代堆空间的默认值。
+   MaxNewSize               = 703594496 (671.0MB)    --JVM 新生代堆空间允许的最大值。
+   OldSize                  = 88080384 (84.0MB)      --JVM 老年代堆空间的默认值。
+   NewRatio                 = 2                      --新生代与老年代的堆空间比值，表示新生代：老年代=1：2，这里最大新生代(MaxNewSize)就是2014(MaxHeapSize)/3=671m;如果配4，那就是1:4
+   SurvivorRatio            = 8                      --新生代中eden区占比，配置8,那么eden区就是 8*NewSize/(8+1+1)约=33.6M，S0就是NewSize/(8+1+1)约=4.4M
+   MetaspaceSize            = 21807104 (20.796875MB) --JVM 元空间的默认值。
+   CompressedClassSpaceSize = 1073741824 (1024.0MB)  --compressed class space(存放Klass对象)空间的大小
+   MaxMetaspaceSize         = 17592186044415 MB      --JVM 元空间允许的最大值。
+   G1HeapRegionSize         = 0 (0.0MB)              --在使用 G1 垃圾回收算法中每个 Region 空间的大小。
+
+Heap Usage:
+PS Young Generation
+Eden Space:
+   capacity = 33554432 (32.0MB)
+   used     = 4703968 (4.486053466796875MB)
+   free     = 28850464 (27.513946533203125MB)
+   14.018917083740234% used
+From Space:
+   capacity = 5242880 (5.0MB)
+   used     = 0 (0.0MB)
+   free     = 5242880 (5.0MB)
+   0.0% used
+To Space:
+   capacity = 5242880 (5.0MB)
+   used     = 0 (0.0MB)
+   free     = 5242880 (5.0MB)
+   0.0% used
+PS Old Generation
+   capacity = 88080384 (84.0MB)
+   used     = 0 (0.0MB)
+   free     = 88080384 (84.0MB)
+   0.0% used
+
+3161 interned Strings occupying 259392 bytes.

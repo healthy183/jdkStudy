@@ -1,0 +1,12 @@
+MyClassLoadBreakTest.java
+模拟tomcat打破双亲委托机制，核心代码是loadClass(...)
+
+MyClassLoadTest.java
+模拟双亲委托机制，如果本地和父classLoad有相同class，优先加载父classLoad
+
+
+TestJDKClassLoader.java
+简单展示java各个classLoader，包含：
+bootstrapLoader
+extClassLoader
+appClassLoader
